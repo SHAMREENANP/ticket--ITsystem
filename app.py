@@ -40,14 +40,31 @@ if not ADMIN_USERNAME or not ADMIN_PASSWORD:
     raise RuntimeError("Set ADMIN_USERNAME and ADMIN_PASSWORD environment variables.")
 
 
+
 class Ticket(db.Model):
+    __tablename__ = "ticket"
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(150), nullable=False)
     subject = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
-    status = db.Column(db.String(30), nullable=False, default="Open")
-    created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+    status = db.Column(
+        db.String(30),
+        nullable=False,
+        default="Open",
+        server_default="Open",
+    )
+    created_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        server_default=db.func.now(),
+    )
+
+
+# Create missing tables in the configured database.
+with app.app_context():
+    db.create_all()
 
 
 def admin_required(view):
